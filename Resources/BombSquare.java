@@ -13,27 +13,39 @@ public class BombSquare extends GameSquare
 		thisSquareHasBomb = (r.nextInt(MINE_PROBABILITY) == 0);
 	}
 
-	// public int checkSurroundingBombs(){
-	// 	int bombCount = 0; 
+	public int checkSurroundingBombs(){
+ 		
+		int bombCount = 0;
 
-	// 	for(int x = xLocation - 1; x <= 3; x++){
-	// 		for(int y = yLocation - 1; y <= 3; y++){
-	// 			if(thisSquareHasBomb == true){
-	// 				bombCount++;
-	// 			}
-	// 		}
-	// 	}
-	// 	return bombCount;
-	// }
+		for(int i = -1; i <= 1; i++){
+			for(int j = -1; j <= 1; j++){
+				if(isSquareOutOfBounds(i,j)){
+					GameSquare adjacenSquare = board.getSquareAt(xLocation + i, yLocation + j);
+					if (adjacenSquare != null && ((BombSquare)adjacenSquare).thisSquareHasBomb){
+						bombCount++;
+					}
+				}
+			}
+		}
+		return bombCount;
+	}
+
+	private boolean isSquareOutOfBounds(int x, int y){
+		return xLocation + x > 0 && xLocation + x < board.getWidth() &&
+				yLocation + y > 0 && yLocation + y < board.getHeight(); 
+	}
 
 	public void clicked()
 	{
-		int bombCount;
-		if(thisSquareHasBomb == true){
-		setImage("images/bomb.png");
+		if(thisSquareHasBomb){
+			setImage("images/bomb.png");
 		}else{
-			setIcon(getDisabledIcon());
-		}
+			
+			int numSurroundingBombs = checkSurroundingBombs();
 
+			if(numSurroundingBombs > 0){
+				setImage("images/" + numSurroundingBombs + ".png");
+			}
+		}
 	}
 }
